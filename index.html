@@ -7,7 +7,14 @@
 <meta name="description" content="Consulta de códigos de produtos e serviços cadastrados — Departamento Fiscal Âmbar Energia">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23F68B20'/%3E%3Ctext x='16' y='23' font-family='Verdana' font-size='19' font-weight='bold' fill='white' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#4A565D">
-<link rel="stylesheet" href="css/style.css?v=5">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Consulta Fiscal">
+<link rel="stylesheet" href="css/style.css?v=6">
 </head>
 <body>
 
@@ -72,7 +79,7 @@
 
     <div class="card">
       <div class="resultado-head">
-        <span class="qtd" id="qtdProd">Digite acima para pesquisar</span>
+        <span class="qtd" id="qtdProd" role="status" aria-live="polite">Digite acima para pesquisar</span>
         <span class="muted small">use o botão <b>copiar</b> para levar o código direto para a requisição</span>
       </div>
       <div class="table-scroll">
@@ -116,12 +123,12 @@
           </div>
         </div>
       </div>
-      <div id="avisoServ"></div>
+      <div id="avisoServ" role="status" aria-live="polite"></div>
     </div>
 
     <div class="card">
       <div class="resultado-head">
-        <span class="qtd" id="qtdServ">Digite acima para pesquisar</span>
+        <span class="qtd" id="qtdServ" role="status" aria-live="polite">Digite acima para pesquisar</span>
         <span class="muted small">o código LC 116 vai na NFS-e · o código ERP vai na requisição</span>
       </div>
       <div class="table-scroll">
@@ -137,7 +144,7 @@
   </section>
 </main>
 
-<script src="js/busca.js?v=5"></script>
-<script src="js/app.js?v=5"></script>
+<script src="js/busca.js?v=6"></script>
+<script src="js/app.js?v=6"></script>
 </body>
 </html>

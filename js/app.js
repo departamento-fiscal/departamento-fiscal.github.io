@@ -8,6 +8,13 @@
   'use strict';
   var esc = Busca.escapaHtml;
 
+  /* PWA: service worker (offline + instalável). Só em contexto seguro. */
+  if ('serviceWorker' in navigator && window.isSecureContext) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () { /* sem SW, o site segue normal */ });
+    });
+  }
+
   var produtos = null, servicos = null;
   var idxProd = null, idxServ = null;
   var MAX_LINHAS = 60;
@@ -41,7 +48,8 @@
     montaDatalistNcm();
     document.getElementById('pillBase').textContent =
       produtos.linhas.length.toLocaleString('pt-BR') + ' produtos · ' + servicos.linhas.length + ' serviços';
-    document.getElementById('pillAtualizado').textContent = 'base atualizada em ' + formataData(produtos.atualizado_em);
+    var maisRecente = [produtos.atualizado_em, servicos.atualizado_em].sort().pop();
+    document.getElementById('pillAtualizado').textContent = 'base atualizada em ' + formataData(maisRecente);
     var badge = document.getElementById('statusBadge');
     badge.textContent = 'base carregada';
     badge.classList.add('ok');
@@ -78,15 +86,20 @@
     produtos: ['Consulta de Produtos', 'Encontre o código correto antes da requisição ou da conferência da nota fiscal'],
     servicos: ['Consulta de Serviços', 'Encontre o código LC 116 e ERP corretos, com a retenção de impostos adequada']
   };
+  function ativaAba(nome) {
+    if (!TITULOS[nome]) return;
+    document.querySelectorAll('.nav-item').forEach(function (x) { x.classList.toggle('active', x.dataset.tab === nome); });
+    document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+    document.getElementById('tab-' + nome).classList.add('active');
+    document.getElementById('pageTitle').textContent = TITULOS[nome][0];
+    document.getElementById('pageSubtitle').textContent = TITULOS[nome][1];
+    if (history.replaceState) history.replaceState(null, '', '#' + nome);
+  }
   document.querySelectorAll('.nav-item').forEach(function (b) {
-    b.addEventListener('click', function () {
-      document.querySelectorAll('.nav-item').forEach(function (x) { x.classList.toggle('active', x === b); });
-      document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
-      document.getElementById('tab-' + b.dataset.tab).classList.add('active');
-      document.getElementById('pageTitle').textContent = TITULOS[b.dataset.tab][0];
-      document.getElementById('pageSubtitle').textContent = TITULOS[b.dataset.tab][1];
-    });
+    b.addEventListener('click', function () { ativaAba(b.dataset.tab); });
   });
+  /* deep-link: /#servicos abre direto na aba de serviços */
+  if (location.hash === '#servicos') ativaAba('servicos');
 
   /* ---------------- util ---------------- */
   function debounce(fn, ms) {
@@ -96,13 +109,37 @@
   function botaoCopiar(codigo) {
     return '<button class="btn mini" type="button" data-copia="' + esc(codigo) + '" title="Copiar código ' + esc(codigo) + '">copiar</button>';
   }
+  function copiaTexto(texto) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(texto);
+    }
+    /* fallback para navegadores antigos / contexto não seguro */
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea');
+      ta.value = texto;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy') ? resolve() : reject(new Error('copy falhou'));
+      } catch (err) {
+        reject(err);
+      } finally {
+        document.body.removeChild(ta);
+      }
+    });
+  }
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-copia]');
     if (!b) return;
-    navigator.clipboard.writeText(b.dataset.copia).then(function () {
+    copiaTexto(b.dataset.copia).then(function () {
       var antes = b.textContent;
       b.textContent = 'copiado ✓';
       setTimeout(function () { b.textContent = antes; }, 1200);
+    }).catch(function () {
+      b.textContent = 'copie: ' + b.dataset.copia;
     });
   });
 
