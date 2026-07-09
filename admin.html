@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADM · Consulta Fiscal Âmbar</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234A565D'/%3E%3Ctext x='16' y='23' font-family='Verdana' font-size='19' font-weight='bold' fill='%23F68B20' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css?v=2">
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">A</div>
+    <div>
+      <div class="brand-name">Âmbar<span class="energia">ENERGIA</span></div>
+      <div class="brand-sub">Departamento Fiscal · ADM</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <a class="nav-item" href="index.html"><span class="ni">←</span> Voltar à consulta</a>
+    <button class="nav-item active" type="button"><span class="ni">⇪</span> Atualizar base</button>
+  </nav>
+  <div class="sidebar-foot">
+    <div class="muted small">acesso restrito ao administrador</div>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <div>
+      <h1>Atualização da base de dados</h1>
+      <div class="muted">Envie a planilha saneada e publique a nova versão para todos os usuários</div>
+    </div>
+    <div class="topbar-right"><div class="badge-status" id="statusBadge">bloqueado</div></div>
+  </header>
+
+  <!-- ============ LOGIN ============ -->
+  <section id="telaLogin" class="login-box">
+    <div class="card">
+      <div class="card-head"><h3>Acesso do administrador</h3></div>
+      <div class="field-row">
+        <label style="flex:1;">Senha
+          <input type="password" id="senha" autocomplete="current-password">
+        </label>
+      </div>
+      <button class="btn primary" id="btnEntrar" type="button">Entrar</button>
+      <div id="msgLogin"></div>
+    </div>
+  </section>
+
+  <!-- ============ PAINEL ============ -->
+  <section id="telaPainel" class="admin-wrap" hidden>
+    <div class="card">
+      <div class="card-head"><h3>1 · Planilha da base</h3>
+        <span class="muted small">arquivo .xlsx com as abas <b>Produtos</b> e <b>Servicos</b> (mesmo layout da Base Fiscal - Saneada)</span>
+      </div>
+      <div class="dropzone" id="dropzone">
+        <b>Clique para escolher</b> ou arraste o arquivo .xlsx aqui
+        <div class="muted small" style="margin-top:6px;">nada é enviado até você clicar em Publicar</div>
+      </div>
+      <input type="file" id="arquivo" accept=".xlsx" hidden>
+      <div id="msgArquivo"></div>
+      <ul class="check-list" id="resumoArquivo"></ul>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>2 · Publicação no site</h3>
+        <span class="muted small">a atualização entra no ar em ~1 minuto para todos os usuários</span>
+      </div>
+      <div class="field-row">
+        <label style="flex:1;">Token de publicação do GitHub (fine-grained, com permissão de conteúdo neste repositório)
+          <input type="password" id="token" placeholder="github_pat_…" autocomplete="off">
+        </label>
+      </div>
+      <label style="flex-direction:row; align-items:center; gap:8px; font-weight:400;">
+        <input type="checkbox" id="lembrarToken" style="width:auto; box-shadow:none;"> lembrar token neste navegador (somente em computador de uso pessoal)
+      </label>
+      <div class="btn-row" style="margin-top:14px;">
+        <button class="btn primary" id="btnPublicar" type="button" disabled>Publicar atualização</button>
+      </div>
+      <div id="msgPublicar"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Como funciona</h3></div>
+      <ul class="check-list">
+        <li>A planilha é validada aqui no navegador (abas, colunas e formatos).</li>
+        <li>Ao publicar, os dados são gravados no repositório do site com o seu token — cada publicação fica registrada no histórico do GitHub.</li>
+        <li>Os usuários da consulta não precisam de login; somente esta página de atualização é restrita.</li>
+        <li>Para trocar a senha desta página, atualize o hash em <b>js/admin.js</b> (instruções no README do repositório).</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="js/admin.js?v=2"></script>
+</body>
+</html>

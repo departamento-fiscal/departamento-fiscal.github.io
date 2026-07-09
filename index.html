@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consulta Fiscal · Âmbar Energia</title>
+<meta name="description" content="Consulta de códigos de produtos e serviços cadastrados — Departamento Fiscal Âmbar Energia">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23F68B20'/%3E%3Ctext x='16' y='23' font-family='Verdana' font-size='19' font-weight='bold' fill='white' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css?v=2">
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">A</div>
+    <div>
+      <div class="brand-name">Âmbar<span class="energia">ENERGIA</span></div>
+      <div class="brand-sub">Departamento Fiscal · Consulta</div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-item active" data-tab="produtos"><span class="ni">▣</span> Produtos</button>
+    <button class="nav-item" data-tab="servicos"><span class="ni">⚙</span> Serviços</button>
+  </nav>
+
+  <div class="sidebar-foot">
+    <div class="pill" id="pillBase">carregando base…</div>
+    <div class="muted small" id="pillAtualizado" style="margin-top:6px;">&nbsp;</div>
+    <div style="margin-top:10px;"><a href="admin.html">acesso restrito (ADM)</a></div>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <div>
+      <h1 id="pageTitle">Consulta de Produtos</h1>
+      <div class="muted" id="pageSubtitle">Encontre o código correto antes da requisição ou da conferência da nota fiscal</div>
+    </div>
+    <div class="topbar-right">
+      <div class="badge-status" id="statusBadge">carregando…</div>
+    </div>
+  </header>
+
+  <!-- ================= PRODUTOS ================= -->
+  <section class="tab active" id="tab-produtos">
+    <div class="card">
+      <div class="card-head">
+        <h3>O que você precisa requisitar?</h3>
+        <span class="muted small">busque por nome, característica ou NCM — a busca tolera abreviações e erros de digitação</span>
+      </div>
+      <div class="field-row">
+        <label class="grande">Produto ou palavra-chave
+          <input type="search" id="qProduto" placeholder="ex.: tinta epoxi, parafuso inox, oleo lubrificante, monitor…" autocomplete="off">
+        </label>
+        <label>NCM (opcional)
+          <input type="search" id="qNcm" list="listaNcm" placeholder="ex.: 3209 ou 3209.10.10" autocomplete="off">
+          <datalist id="listaNcm"></datalist>
+        </label>
+        <label>Tipo de item
+          <select id="qTipo">
+            <option value="">Todos</option>
+            <option value="Produto">Produto</option>
+            <option value="Bem Patrimonial">Bem Patrimonial</option>
+          </select>
+        </label>
+        <button class="btn" id="btnLimparProd" type="button">Limpar</button>
+      </div>
+      <div class="muted small">Dica: quanto mais específico, melhor a sugestão — “tinta epoxi cinza balde” acha direto o código certo.</div>
+    </div>
+
+    <div class="card">
+      <div class="resultado-head">
+        <span class="qtd" id="qtdProd">Digite acima para pesquisar</span>
+        <span class="muted small">use o botão <b>copiar</b> para levar o código direto para a requisição</span>
+      </div>
+      <div class="table-scroll">
+        <table aria-label="Resultados de produtos">
+          <thead><tr>
+            <th></th><th>Código ERP</th><th>Nome do produto</th><th>Descrição detalhada</th>
+            <th>NCM</th><th>Classificação fiscal</th><th>Unid.</th><th>Tipo</th>
+          </tr></thead>
+          <tbody id="tbodyProd"><tr><td colspan="8"><div class="vazio">Comece digitando o produto que você precisa.<br>Ex.: <b>graxa rolamento</b> · <b>cabo flexivel 2,5mm</b> · <b>impressora etiqueta</b></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SERVIÇOS ================= -->
+  <section class="tab" id="tab-servicos">
+    <div class="card">
+      <div class="card-head">
+        <h3>Qual serviço será contratado?</h3>
+        <span class="muted small">a retenção de impostos muda conforme o local e a frequência do serviço</span>
+      </div>
+      <div class="field-row">
+        <label class="grande">Serviço pretendido
+          <input type="search" id="qServico" placeholder="ex.: manutenção de equipamentos, consultoria, transporte, limpeza…" autocomplete="off">
+        </label>
+        <div class="escolha">
+          <span class="titulo">Onde o serviço será realizado?</span>
+          <div class="pills" role="group" aria-label="Local de execução">
+            <button class="pill-opt" type="button" id="optDentro" aria-pressed="false">No estabelecimento Âmbar</button>
+            <button class="pill-opt" type="button" id="optFora" aria-pressed="false">Fora do estabelecimento</button>
+          </div>
+        </div>
+        <button class="btn" id="btnLimparServ" type="button">Limpar</button>
+      </div>
+      <div class="field-row" id="rowFrequencia" hidden>
+        <div class="escolha">
+          <span class="titulo">Serviço de manutenção — qual a frequência?</span>
+          <div class="pills" role="group" aria-label="Frequência do serviço de manutenção">
+            <button class="pill-opt" type="button" id="optEsporadico" aria-pressed="false">Esporádico (pontual)</button>
+            <button class="pill-opt" type="button" id="optContinuo" aria-pressed="false">Contínuo (contrato recorrente)</button>
+          </div>
+        </div>
+      </div>
+      <div id="avisoServ"></div>
+    </div>
+
+    <div class="card">
+      <div class="resultado-head">
+        <span class="qtd" id="qtdServ">Digite acima para pesquisar</span>
+        <span class="muted small">o código LC 116 vai na NFS-e · o código ERP vai na requisição</span>
+      </div>
+      <div class="table-scroll">
+        <table aria-label="Resultados de serviços">
+          <thead><tr>
+            <th></th><th>LC 116</th><th>Código ERP</th><th>Descrição do serviço</th>
+            <th>Quando utilizar</th><th>Impostos retidos</th><th>Conta contábil</th>
+          </tr></thead>
+          <tbody id="tbodyServ"><tr><td colspan="7"><div class="vazio">Comece digitando o serviço e informe onde ele será realizado.<br>Ex.: <b>manutenção de bombas</b> · <b>armazenagem</b> · <b>treinamento</b></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="js/busca.js?v=2"></script>
+<script src="js/app.js?v=2"></script>
+</body>
+</html>
