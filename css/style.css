@@ -127,6 +127,7 @@ body {
 .sidebar-foot .muted { color: rgba(255,255,255,.4); }
 .sidebar-foot a { color: rgba(255,255,255,.55); text-decoration: none; font-size: 10.5px; }
 .sidebar-foot a:hover { color: var(--laranja); }
+.adm-curto { display: none; }
 
 /* ============================ MAIN ============================ */
 .main { flex: 1; padding: 26px 30px 46px; max-width: 1500px; min-width: 0; }
@@ -334,14 +335,62 @@ input:focus, select:focus {
   .sidebar {
     width: 100%; min-width: 0; height: auto; position: static;
     flex-direction: row; align-items: center; gap: 10px;
-    padding: 14px 16px;
+    padding: 12px 14px;
   }
   .sidebar::before { display: none; }
   .brand { padding: 0; }
-  .nav { flex-direction: row; flex: 1; justify-content: center; margin: 0; }
+  .brand-sub { display: none; }
+  .nav { flex-direction: row; flex: 1; justify-content: center; margin: 0; gap: 6px; }
+  .nav-item { padding: 9px 12px; }
   .nav-item:hover { transform: none; }
   .sidebar-foot { border: 0; padding: 0; }
   .sidebar-foot .pill, .sidebar-foot .muted { display: none; }
   .main { padding: 18px 14px 40px; }
   td.wrap { max-width: 260px; }
+}
+
+/* celular: resultados viram cards empilhados (sem rolagem lateral) */
+@media (max-width: 700px) {
+  .sidebar { gap: 8px; padding: 10px 12px; }
+  .brand-icon { width: 34px; height: 34px; font-size: 16px; border-radius: 10px; }
+  .brand-name { font-size: 13px; }
+  .brand-name .energia { font-size: 8px; letter-spacing: 2.5px; }
+  .nav { gap: 4px; }
+  .nav-item { padding: 8px 10px; font-size: 11.5px; gap: 6px; }
+  .ni { display: none; }
+  .adm-longo { display: none; }
+  .adm-curto {
+    display: inline-block; padding: 6px 10px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.08);
+    font-size: 10px; font-weight: 700; color: rgba(255,255,255,.7);
+  }
+  .sidebar-foot > div { margin-top: 0 !important; }
+  .card { padding: 16px 15px; }
+  .topbar h1 { font-size: 17px; }
+
+  .table-scroll { max-height: none; border: 0; box-shadow: none; background: transparent; overflow: visible; }
+  table, tbody, tr, td { display: block; width: 100%; }
+  thead { display: none; }
+  tbody tr {
+    background: linear-gradient(180deg, #ffffff, #fdfdfe) !important;
+    border: 1px solid var(--linha); border-radius: 14px;
+    margin-bottom: 12px; padding: 12px 14px 10px;
+    box-shadow: 0 1px 2px rgba(74,86,93,.08), 0 8px 18px rgba(74,86,93,.08);
+    position: relative;
+  }
+  tbody tr:hover { background: linear-gradient(180deg, #ffffff, #fdfdfe) !important; }
+  tbody td { border: 0; padding: 5px 0; white-space: normal; overflow-wrap: anywhere; }
+  tbody td:empty { display: none; }
+  td.wrap { max-width: none; }
+  tbody td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 9px; letter-spacing: .7px; text-transform: uppercase;
+    color: var(--texto-2); font-weight: 700; margin-bottom: 2px;
+  }
+  td.acao { position: absolute; top: 10px; right: 10px; width: auto; padding: 0; }
+  td.acao .btn.mini { padding: 7px 14px; font-size: 11px; }
+  tbody td.cod[data-label] { font-size: 14px; }
+  .tag { white-space: normal; line-height: 1.5; }
+  .vazio { padding: 26px 8px; }
 }

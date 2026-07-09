@@ -151,14 +151,14 @@
         ? '<span class="tag warn" title="Item ainda sem NCM definido — confirme com o Fiscal">sem NCM</span>'
         : esc(l[3]);
       return '<tr>' +
-        '<td>' + botaoCopiar(l[0]) + '</td>' +
-        '<td class="cod">' + esc(l[0]) + (marcaTop ? '<br>' + marcaTop : '') + '</td>' +
-        '<td class="wrap">' + Busca.destaca(l[1], q) + '</td>' +
-        '<td class="wrap">' + Busca.destaca(l[2], q) + '</td>' +
-        '<td class="cod">' + ncmCell + '</td>' +
-        '<td class="wrap">' + esc(l[4]) + '</td>' +
-        '<td>' + esc(l[5]) + '</td>' +
-        '<td>' + (l[6] === 'Bem Patrimonial' ? '<span class="tag ok">Bem Patrimonial</span>' : '<span class="tag neutro">Produto</span>') + '</td>' +
+        '<td class="acao">' + botaoCopiar(l[0]) + '</td>' +
+        '<td class="cod" data-label="Código ERP">' + esc(l[0]) + (marcaTop ? '<br>' + marcaTop : '') + '</td>' +
+        '<td class="wrap" data-label="Nome do produto">' + Busca.destaca(l[1], q) + '</td>' +
+        '<td class="wrap" data-label="Descrição detalhada">' + Busca.destaca(l[2], q) + '</td>' +
+        '<td class="cod" data-label="NCM">' + ncmCell + '</td>' +
+        '<td class="wrap" data-label="Classificação fiscal">' + esc(l[4]) + '</td>' +
+        '<td data-label="Unidade">' + esc(l[5]) + '</td>' +
+        '<td data-label="Tipo">' + (l[6] === 'Bem Patrimonial' ? '<span class="tag ok">Bem Patrimonial</span>' : '<span class="tag neutro">Produto</span>') + '</td>' +
         '</tr>';
     }).join('');
 
@@ -248,13 +248,13 @@
         ? '<span class="tag neutro">Não retém</span>'
         : '<span class="tag ' + (inss ? 'warn' : 'ok') + '">' + esc(l[4]) + '</span>';
       return '<tr>' +
-        '<td>' + botaoCopiar(l[1]) + '</td>' +
-        '<td class="cod">' + esc(l[0]) + (marcaTop ? '<br>' + marcaTop : '') + '</td>' +
-        '<td class="cod">' + esc(l[1]) + '</td>' +
-        '<td class="wrap">' + Busca.destaca(l[2], q) + '</td>' +
-        '<td class="wrap">' + Busca.destaca(l[3], q) + '</td>' +
-        '<td>' + tagImposto + '</td>' +
-        '<td class="wrap"><span class="cod">' + esc(l[5]) + '</span> · ' + esc(l[6]) + '</td>' +
+        '<td class="acao">' + botaoCopiar(l[1]) + '</td>' +
+        '<td class="cod" data-label="LC 116">' + esc(l[0]) + (marcaTop ? '<br>' + marcaTop : '') + '</td>' +
+        '<td class="cod" data-label="Código ERP">' + esc(l[1]) + '</td>' +
+        '<td class="wrap" data-label="Descrição do serviço">' + Busca.destaca(l[2], q) + '</td>' +
+        '<td class="wrap" data-label="Quando utilizar">' + Busca.destaca(l[3], q) + '</td>' +
+        '<td data-label="Impostos retidos">' + tagImposto + '</td>' +
+        '<td class="wrap" data-label="Conta contábil"><span class="cod">' + esc(l[5]) + '</span> · ' + esc(l[6]) + '</td>' +
         '</tr>';
     }).join('');
 

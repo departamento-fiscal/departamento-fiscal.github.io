@@ -49,6 +49,14 @@
     epi: 'protecao'
   };
 
+  /* palavras vazias: não pontuam nem são destacadas */
+  var STOP = { de: 1, da: 1, do: 1, das: 1, dos: 1, em: 1, no: 1, na: 1, nos: 1, nas: 1, e: 1, ou: 1, com: 1, para: 1, por: 1, um: 1, uma: 1, o: 1, a: 1, os: 1, as: 1 };
+
+  function tokensUteis(q) {
+    var t = norm(q).split(' ').filter(function (x) { return x.length >= 2 && !STOP[x]; });
+    return t;
+  }
+
   function expandeTokens(tokens) {
     var out = [];
     tokens.forEach(function (t) {
@@ -139,7 +147,7 @@
         if (melhor > 0) resultados.push({ idx: rec.idx, linha: rec.linha, score: melhor });
       });
     } else {
-      var tokens = norm(q).split(' ').filter(function (t) { return t.length >= 2; });
+      var tokens = tokensUteis(q);
       if (!tokens.length) return [];
       var expandidos = tokens.map(function (t) {
         return SINONIMOS[t] && SINONIMOS[t] !== t ? [t, SINONIMOS[t]] : [t];
@@ -162,7 +170,7 @@
           somaPesos += 1;
         });
         if (!casados) return;
-        if (casados / expandidos.length < 0.6) return;
+        if (casados / expandidos.length < 0.5) return;
         var score = soma / somaPesos;
         if (score >= 0.35) resultados.push({ idx: rec.idx, linha: rec.linha, score: score });
       });
@@ -180,8 +188,7 @@
   /* destaca os termos da consulta num texto (para exibição) */
   function destaca(texto, consulta) {
     var t = String(texto || '');
-    var tokens = norm(consulta).split(' ').filter(function (x) { return x.length >= 2; });
-    tokens = expandeTokens(tokens);
+    var tokens = expandeTokens(tokensUteis(consulta));
     if (!tokens.length) return escapaHtml(t);
     var nt = t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
     var marcas = [];
