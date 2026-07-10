@@ -8,7 +8,7 @@
 (function () {
   'use strict';
 
-  var HASH_SENHA = 'fed92377fc0ea67de313c6e75f805cbfb2beb339f2b1cf916d1889b02273b0a3';
+  var HASH_SENHA = '4cd2b31d223fb791d6ffd5a3bf4e8e077b6bddcc3dd51f72c58a98e904b345d2';
   var REPO = 'departamento-fiscal/departamento-fiscal.github.io';
   var COLS_PROD = ['Código do Produto', 'Nome do Produto', 'Descrição Detalhada', 'NCM', 'Classificação Fiscal', 'Unidade de Medida', 'Tipo de Item'];
   var COLS_SERV = ['Código LC 116', 'Código ERP', 'Descrição do Serviço', 'Quando Utilizar', 'Impostos Retidos', 'Conta Contábil', 'Descrição da Conta Contábil'];
