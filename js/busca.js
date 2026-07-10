@@ -46,7 +46,8 @@
     tub: 'tubo',
     mang: 'mangueira',
     impressora: 'impressora', impr: 'impressora',
-    epi: 'protecao'
+    epi: 'protecao',
+    vigilancia: 'seguranca', vigia: 'seguranca', vigilante: 'seguranca'
   };
 
   /* palavras vazias: não pontuam nem são destacadas */
@@ -191,6 +192,9 @@
     var tokens = expandeTokens(tokensUteis(consulta));
     if (!tokens.length) return escapaHtml(t);
     var nt = t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    /* se a normalização altera o comprimento, os índices não alinham com o
+       texto original — não destacamos para evitar marcação deslocada */
+    if (nt.length !== t.length) return escapaHtml(t);
     var marcas = [];
     tokens.forEach(function (tok) {
       var i = 0;

@@ -212,20 +212,38 @@
     buscaProdutos(); elQProd.focus();
   });
 
-  /* ================= SERVIÇOS ================= */
+  /* ================= SERVIÇOS =================
+     A DECISÃO fiscal (retenção de INSS) NÃO depende mais da palavra digitada
+     nem de um filtro destrutivo por local. Ela vem do campo estruturado
+     "Impostos Retidos" (classificado por js/fiscal.js) + de um questionário
+     fiscal (cessão de mão de obra/empreitada, local, continuidade, Simples).
+     A ferramenta é ADVISORY: orienta e destaca, mas nunca esconde o código
+     correto, e sempre remete a confirmação ao Departamento Fiscal. */
   var elQServ = document.getElementById('qServico');
 
-  function retemInss(l) { return /INSS/i.test(l[4]); }
-  function ehManutencao(q) {
-    var tokens = Busca.norm(q).split(' ');
-    return tokens.some(function (t) { return t.indexOf('manut') === 0 || t === 'mnt'; });
+  var local = null;      // 'dentro' | 'fora' (local de execução — informativo)
+  var cessao = null;     // 'sim' | 'nao' | 'naosei' (cessão de mão de obra/empreitada)
+  var continuo = null;   // true | false (serviço contínuo/recorrente)
+  var simples = null;    // 'sim' | 'nao' (prestador optante pelo Simples Nacional)
+
+  function classif(l) { return Fiscal.classificaImpostos(l[4]); }
+
+  function pillsServ() {
+    function set(id, on) { var e = document.getElementById(id); if (e) e.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+    set('optDentro', local === 'dentro');
+    set('optFora', local === 'fora');
+    set('optCessaoSim', cessao === 'sim');
+    set('optCessaoNao', cessao === 'nao');
+    set('optCessaoNaoSei', cessao === 'naosei');
+    set('optEsporadico', continuo === false);
+    set('optContinuo', continuo === true);
+    set('optSimplesSim', simples === 'sim');
+    set('optSimplesNao', simples === 'nao');
   }
 
-  function pillsLocal() {
-    document.getElementById('optDentro').setAttribute('aria-pressed', local === 'dentro');
-    document.getElementById('optFora').setAttribute('aria-pressed', local === 'fora');
-    document.getElementById('optEsporadico').setAttribute('aria-pressed', frequencia === 'esporadico');
-    document.getElementById('optContinuo').setAttribute('aria-pressed', frequencia === 'continuo');
+  function avisoHtml(cls, texto) {
+    var ico = cls.indexOf('alerta') >= 0 ? '⚠' : 'ℹ';
+    return '<div class="' + cls + '"><span class="ico">' + ico + '</span><span>' + esc(texto) + '</span></div>';
   }
 
   function buscaServicos() {
@@ -234,63 +252,64 @@
     var tbody = document.getElementById('tbodyServ');
     var qtd = document.getElementById('qtdServ');
     var avisoBox = document.getElementById('avisoServ');
-    var manut = q && ehManutencao(q);
-
-    /* pergunta de frequência só aparece p/ manutenção dentro do estabelecimento */
-    var mostraFreq = manut && local === 'dentro';
-    document.getElementById('rowFrequencia').hidden = !mostraFreq;
-    if (!mostraFreq) frequencia = null;
-    pillsLocal();
 
     if (!q) {
       qtd.textContent = 'Digite acima para pesquisar';
       avisoBox.innerHTML = '';
-      tbody.innerHTML = '<tr><td colspan="7"><div class="vazio">Comece digitando o serviço e informe onde ele será realizado.<br>Ex.: <b>manutenção de bombas</b> · <b>armazenagem</b> · <b>treinamento</b></div></td></tr>';
+      document.getElementById('rowFiscal').hidden = true;
+      tbody.innerHTML = '<tr><td colspan="7"><div class="vazio">Comece digitando o serviço pretendido.<br>Ex.: <b>manutenção de bombas</b> · <b>limpeza</b> · <b>vigilância</b> · <b>transporte</b></div></td></tr>';
       return;
     }
 
     var res = Busca.busca(idxServ, q, 300);
-    var avisos = [];
 
-    if (!local) {
-      avisos.push('<div class="aviso"><span class="ico">⚠</span><span>Informe <b>onde o serviço será realizado</b> — a retenção de INSS depende disso. Mostrando todas as opções por enquanto.</span></div>');
-    } else if (local === 'fora') {
-      res = res.filter(function (r) { return !retemInss(r.linha); });
-      avisos.push('<div class="aviso"><span class="ico">ℹ</span><span>Serviço <b>fora do estabelecimento</b>: exibindo somente códigos <b>sem retenção de INSS</b>.</span></div>');
-    } else if (mostraFreq) {
-      if (frequencia === 'continuo') {
-        res = res.filter(function (r) { return retemInss(r.linha); });
-        avisos.push('<div class="aviso alerta"><span class="ico">⚠</span><span>Manutenção <b>contínua</b> no estabelecimento: a legislação determina <b>retenção de INSS</b> — exibindo somente códigos que retêm INSS.</span></div>');
-      } else if (frequencia === 'esporadico') {
-        res = res.filter(function (r) { return !retemInss(r.linha); });
-        avisos.push('<div class="aviso"><span class="ico">ℹ</span><span>Manutenção <b>esporádica</b>: exibindo códigos <b>sem retenção de INSS</b>.</span></div>');
-      } else {
-        avisos.push('<div class="aviso"><span class="ico">⚠</span><span>Serviço de manutenção: informe se é <b>esporádico ou contínuo</b> — a retenção de INSS muda conforme a frequência. Mostrando todas as opções por enquanto.</span></div>');
-      }
+    /* O questionário fiscal aparece quando HÁ, entre os candidatos, algum
+       código que retém INSS na classificação cadastrada — independentemente
+       da palavra digitada. */
+    var temInss = res.some(function (r) { return classif(r.linha).retemInss; });
+    var temSimples = res.some(function (r) { return classif(r.linha).excecaoSimples; });
+    document.getElementById('rowFiscal').hidden = !temInss;
+    if (!temInss) { local = null; cessao = null; continuo = null; simples = null; }
+    pillsServ();
+
+    var avisos = [];
+    if (temInss) {
+      var aval = Fiscal.avaliaCenario(
+        { local: local, cessao: cessao, continuo: continuo, simples: simples },
+        { reconhecido: true, retemInss: true, excecaoSimples: temSimples }
+      );
+      var cls = aval.inss === 'aplica' ? 'aviso alerta' : 'aviso';
+      aval.mensagens.forEach(function (m) { avisos.push(avisoHtml(cls, m)); });
     }
     avisoBox.innerHTML = avisos.join('');
 
     if (!res.length) {
       qtd.textContent = 'Nenhum serviço encontrado';
-      tbody.innerHTML = '<tr><td colspan="7"><div class="vazio"><b>Nenhum resultado com os critérios atuais.</b><br>Tente outras palavras ou revise o local/frequência selecionados.<br>Se o serviço não existe na base, contate o Departamento Fiscal.</div></td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7"><div class="vazio"><b>Nenhum resultado com os critérios atuais.</b><br>Tente outras palavras ou outra grafia.<br>Se o serviço não existe na base, contate o Departamento Fiscal.</div></td></tr>';
       return;
     }
 
     var top = res[0].score;
     var html = res.slice(0, MAX_LINHAS).map(function (r, i) {
       var l = r.linha;
+      var c = classif(l);
       var marcaTop = (i === 0 && top >= 0.7) ? '<span class="tag top">melhor correspondência</span>' : '';
-      var inss = retemInss(l);
-      var tagImposto = l[4] === 'Não Retém'
+      var retemAlgo = c.retemInss || c.retemIr || c.retemPcc || c.retemPisCofins;
+      var tagImposto = !retemAlgo
         ? '<span class="tag neutro">Não retém</span>'
-        : '<span class="tag ' + (inss ? 'warn' : 'ok') + '">' + esc(l[4]) + '</span>';
-      return '<tr>' +
+        : '<span class="tag ' + (c.retemInss ? 'warn' : 'ok') + '" title="' + esc(c.texto) + '">' + esc(l[4]) + '</span>';
+      /* destaque advisory: marca o código coerente com o cenário informado,
+         sem nunca remover os demais da lista */
+      var recomendado = temInss && cessao && cessao !== 'naosei' &&
+        ((cessao === 'sim' && c.retemInss) || (cessao === 'nao' && !c.retemInss));
+      var tagRec = recomendado ? '<br><span class="tag ok">coerente com o cenário</span>' : '';
+      return '<tr' + (recomendado ? ' class="rec"' : '') + '>' +
         '<td class="acao">' + botaoCopiar(l[1]) + '</td>' +
         '<td class="cod" data-label="LC 116">' + esc(l[0]) + (marcaTop ? '<br>' + marcaTop : '') + '</td>' +
         '<td class="cod" data-label="Código ERP">' + esc(l[1]) + '</td>' +
         '<td class="wrap" data-label="Descrição do serviço">' + Busca.destaca(l[2], q) + '</td>' +
         '<td class="wrap" data-label="Quando utilizar">' + Busca.destaca(l[3], q) + '</td>' +
-        '<td data-label="Impostos retidos">' + tagImposto + '</td>' +
+        '<td data-label="Impostos retidos">' + tagImposto + tagRec + '</td>' +
         '<td class="wrap" data-label="Conta contábil"><span class="cod">' + esc(l[5]) + '</span> · ' + esc(l[6]) + '</td>' +
         '</tr>';
     }).join('');
@@ -301,12 +320,18 @@
   }
 
   elQServ.addEventListener('input', debounce(buscaServicos, 160));
-  document.getElementById('optDentro').addEventListener('click', function () { local = 'dentro'; buscaServicos(); });
-  document.getElementById('optFora').addEventListener('click', function () { local = 'fora'; buscaServicos(); });
-  document.getElementById('optEsporadico').addEventListener('click', function () { frequencia = 'esporadico'; buscaServicos(); });
-  document.getElementById('optContinuo').addEventListener('click', function () { frequencia = 'continuo'; buscaServicos(); });
+  function liga(id, fn) { var e = document.getElementById(id); if (e) e.addEventListener('click', function () { fn(); buscaServicos(); }); }
+  liga('optDentro', function () { local = 'dentro'; });
+  liga('optFora', function () { local = 'fora'; });
+  liga('optCessaoSim', function () { cessao = 'sim'; });
+  liga('optCessaoNao', function () { cessao = 'nao'; });
+  liga('optCessaoNaoSei', function () { cessao = 'naosei'; });
+  liga('optEsporadico', function () { continuo = false; });
+  liga('optContinuo', function () { continuo = true; });
+  liga('optSimplesSim', function () { simples = 'sim'; });
+  liga('optSimplesNao', function () { simples = 'nao'; });
   document.getElementById('btnLimparServ').addEventListener('click', function () {
-    elQServ.value = ''; local = null; frequencia = null;
+    elQServ.value = ''; local = null; cessao = null; continuo = null; simples = null;
     buscaServicos(); elQServ.focus();
   });
 })();
