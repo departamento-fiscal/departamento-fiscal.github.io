@@ -6,7 +6,8 @@
 <title>ADM · Consulta Fiscal Âmbar</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234A565D'/%3E%3Ctext x='16' y='23' font-family='Verdana' font-size='19' font-weight='bold' fill='%23F68B20' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#4A565D">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.github.com; base-uri 'self'; form-action 'self'; object-src 'none'">
+<!-- connect-src: trocar a URL do Worker pela do seu deploy (a mesma de PUBLISHER_URL em js/admin.js) -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://ambar-publisher.arcosta2012.workers.dev; base-uri 'self'; form-action 'self'; object-src 'none'">
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="css/style.css?v=7">
 </head>
@@ -43,6 +44,11 @@
     <div class="card">
       <div class="card-head"><h3>Acesso do administrador</h3></div>
       <div class="field-row">
+        <label style="flex:1;">Usuário
+          <input type="text" id="usuario" autocomplete="username">
+        </label>
+      </div>
+      <div class="field-row">
         <label style="flex:1;">Senha
           <input type="password" id="senha" autocomplete="current-password">
         </label>
@@ -68,19 +74,12 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><h3>2 · Publicação no site</h3>
+      <div class="card-head"><h3>2 · Publicar</h3>
         <span class="muted small">a atualização entra no ar em ~1 minuto para todos os usuários</span>
       </div>
-      <div class="field-row">
-        <label style="flex:1;">Token de publicação do GitHub (fine-grained, com permissão de conteúdo neste repositório)
-          <input type="password" id="token" placeholder="github_pat_…" autocomplete="off">
-        </label>
-      </div>
-      <label style="flex-direction:row; align-items:center; gap:8px; font-weight:400;">
-        <input type="checkbox" id="lembrarToken" style="width:auto; box-shadow:none;"> manter o token apenas nesta sessão do navegador (apagado ao fechar a aba)
-      </label>
-      <div class="btn-row" style="margin-top:14px;">
+      <div class="btn-row" style="margin-top:6px;">
         <button class="btn primary" id="btnPublicar" type="button" disabled>Publicar atualização</button>
+        <button class="btn" id="btnSair" type="button">Sair</button>
       </div>
       <div id="msgPublicar"></div>
     </div>
@@ -88,10 +87,10 @@
     <div class="card">
       <div class="card-head"><h3>Como funciona</h3></div>
       <ul class="check-list">
-        <li>A planilha é validada aqui no navegador (abas, colunas e formatos).</li>
-        <li>Ao publicar, os dados são gravados no repositório do site com o seu token — cada publicação fica registrada no histórico do GitHub.</li>
-        <li>Os usuários da consulta não precisam de login; somente esta página de atualização é restrita.</li>
-        <li>Para trocar a senha desta página, atualize o hash em <b>js/admin.js</b> (instruções no README do repositório).</li>
+        <li>Você entra com <b>usuário e senha</b>. A publicação é feita por um serviço seguro do Departamento — você não precisa de token.</li>
+        <li>A planilha é validada aqui no navegador (abas, colunas e formatos) antes de publicar.</li>
+        <li>Cada publicação fica registrada no histórico do repositório do site.</li>
+        <li>Os usuários da consulta não precisam de login; somente esta página é restrita.</li>
       </ul>
     </div>
   </section>
