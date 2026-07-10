@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#4A565D">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.github.com; base-uri 'self'; form-action 'self'; object-src 'none'">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="css/style.css?v=6">
+<link rel="stylesheet" href="css/style.css?v=7">
 </head>
 <body>
 
@@ -77,7 +77,7 @@
         </label>
       </div>
       <label style="flex-direction:row; align-items:center; gap:8px; font-weight:400;">
-        <input type="checkbox" id="lembrarToken" style="width:auto; box-shadow:none;"> lembrar token neste navegador (somente em computador de uso pessoal)
+        <input type="checkbox" id="lembrarToken" style="width:auto; box-shadow:none;"> manter o token apenas nesta sessão do navegador (apagado ao fechar a aba)
       </label>
       <div class="btn-row" style="margin-top:14px;">
         <button class="btn primary" id="btnPublicar" type="button" disabled>Publicar atualização</button>
@@ -98,6 +98,7 @@
 </main>
 
 <script src="vendor/xlsx.full.min.js"></script>
-<script src="js/admin.js?v=6"></script>
+<script src="js/fiscal.js?v=7"></script>
+<script src="js/admin.js?v=7"></script>
 </body>
 </html>

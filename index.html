@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Consulta Fiscal">
-<link rel="stylesheet" href="css/style.css?v=6">
+<link rel="stylesheet" href="css/style.css?v=7">
 </head>
 <body>
 
@@ -99,31 +99,55 @@
     <div class="card">
       <div class="card-head">
         <h3>Qual serviço será contratado?</h3>
-        <span class="muted small">a retenção de impostos muda conforme o local e a frequência do serviço</span>
+        <span class="muted small">a retenção de INSS depende de cessão de mão de obra/empreitada, natureza e continuidade do serviço, local e regime do prestador</span>
       </div>
       <div class="field-row">
         <label class="grande">Serviço pretendido
-          <input type="search" id="qServico" placeholder="ex.: manutenção de equipamentos, consultoria, transporte, limpeza…" autocomplete="off">
+          <input type="search" id="qServico" placeholder="ex.: manutenção de equipamentos, limpeza, vigilância, transporte, consultoria…" autocomplete="off">
         </label>
-        <div class="escolha">
-          <span class="titulo">Onde o serviço será realizado?</span>
-          <div class="pills" role="group" aria-label="Local de execução">
-            <button class="pill-opt" type="button" id="optDentro" aria-pressed="false">No estabelecimento Âmbar</button>
-            <button class="pill-opt" type="button" id="optFora" aria-pressed="false">Fora do estabelecimento</button>
-          </div>
-        </div>
         <button class="btn" id="btnLimparServ" type="button">Limpar</button>
       </div>
-      <div class="field-row" id="rowFrequencia" hidden>
-        <div class="escolha">
-          <span class="titulo">Serviço de manutenção — qual a frequência?</span>
-          <div class="pills" role="group" aria-label="Frequência do serviço de manutenção">
-            <button class="pill-opt" type="button" id="optEsporadico" aria-pressed="false">Esporádico (pontual)</button>
-            <button class="pill-opt" type="button" id="optContinuo" aria-pressed="false">Contínuo (contrato recorrente)</button>
+
+      <!-- Questionário fiscal: aparece só quando há códigos que retêm INSS entre os candidatos.
+           Nenhuma resposta esconde códigos; as respostas apenas orientam e destacam. -->
+      <div id="rowFiscal" hidden>
+        <div class="field-row">
+          <div class="escolha">
+            <span class="titulo">Há cessão de mão de obra ou empreitada? <span class="muted small">(é o que define a retenção de INSS — Lei 8.212/91, art. 31)</span></span>
+            <div class="pills" role="group" aria-label="Cessão de mão de obra ou empreitada">
+              <button class="pill-opt" type="button" id="optCessaoSim" aria-pressed="false">Sim</button>
+              <button class="pill-opt" type="button" id="optCessaoNao" aria-pressed="false">Não</button>
+              <button class="pill-opt" type="button" id="optCessaoNaoSei" aria-pressed="false">Não sei</button>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="escolha">
+            <span class="titulo">Onde o serviço será executado? <span class="muted small">(informativo)</span></span>
+            <div class="pills" role="group" aria-label="Local de execução">
+              <button class="pill-opt" type="button" id="optDentro" aria-pressed="false">No estabelecimento Âmbar</button>
+              <button class="pill-opt" type="button" id="optFora" aria-pressed="false">Fora / em local indicado pela contratante</button>
+            </div>
+          </div>
+          <div class="escolha">
+            <span class="titulo">Frequência</span>
+            <div class="pills" role="group" aria-label="Frequência do serviço">
+              <button class="pill-opt" type="button" id="optEsporadico" aria-pressed="false">Esporádico (pontual)</button>
+              <button class="pill-opt" type="button" id="optContinuo" aria-pressed="false">Contínuo (recorrente)</button>
+            </div>
+          </div>
+          <div class="escolha">
+            <span class="titulo">Prestador é do Simples Nacional?</span>
+            <div class="pills" role="group" aria-label="Prestador optante pelo Simples Nacional">
+              <button class="pill-opt" type="button" id="optSimplesSim" aria-pressed="false">Sim</button>
+              <button class="pill-opt" type="button" id="optSimplesNao" aria-pressed="false">Não</button>
+            </div>
           </div>
         </div>
       </div>
+
       <div id="avisoServ" role="status" aria-live="polite"></div>
+      <div class="aviso" style="margin-top:10px;"><span class="ico">ℹ</span><span>Esta consulta é <b>orientativa</b>. A definição final da retenção de INSS/ISS é do <b>Departamento Fiscal</b> e considera cessão de mão de obra/empreitada, natureza do serviço (LC 116/2003), continuidade, local e regime do prestador (Simples Nacional tem exceções). Base: Lei 8.212/91, art. 31.</span></div>
     </div>
 
     <div class="card">
@@ -144,7 +168,8 @@
   </section>
 </main>
 
-<script src="js/busca.js?v=6"></script>
-<script src="js/app.js?v=6"></script>
+<script src="js/busca.js?v=7"></script>
+<script src="js/fiscal.js?v=7"></script>
+<script src="js/app.js?v=7"></script>
 </body>
 </html>
