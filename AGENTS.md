@@ -22,13 +22,24 @@ Consulta pública sem login; atualização da base restrita ao ADM.
 
 ## Regras de negócio críticas (legislação fiscal — não alterar sem confirmação)
 
-Em `js/app.js`, aba Serviços (`retemInss()` = campo "Impostos Retidos" contém "INSS"):
-1. Serviço **fora do estabelecimento** → exibir somente códigos **sem** retenção de INSS.
-2. Serviço **no estabelecimento** → todas as opções; se a consulta é de **manutenção**
-   (token começando com "manut"), perguntar a frequência:
-   - **contínuo** → somente códigos **com** retenção de INSS (exigência legal);
-   - **esporádico** → somente códigos **sem** retenção de INSS.
-3. Sem local escolhido → mostrar tudo com aviso pedindo a escolha.
+A decisão fiscal é separada da busca textual: `js/fiscal.js` interpreta o campo
+"Impostos Retidos" de forma estruturada (`classificaImpostos`) e avalia o cenário
+do questionário (`avaliaCenario`). O questionário (cessão de mão de obra/empreitada,
+local, frequência, Simples Nacional) aparece na aba Serviços quando há candidato
+que retém INSS. Regras vigentes (definidas pelo Departamento Fiscal em 10/07/2026):
+1. **Cessão = "Sim"** → em regra incide retenção de INSS (Lei 8.212/91, art. 31);
+   códigos que retêm INSS são destacados como "coerente com o cenário"; código sem
+   INSS neste cenário gera alerta de INCOERÊNCIA. Nada é ocultado.
+2. **Cessão = "Não"** → **códigos que retêm INSS são OCULTADOS da lista** (sem
+   cessão não há retenção; exibi-los induziria à requisição errada). O aviso
+   informa quantos códigos foram ocultados. Se todos os candidatos retêm INSS,
+   a mensagem de vazio explica o porquê. `temInss` (que controla a exibição do
+   questionário) é calculado ANTES do filtro — não mover.
+3. **Cessão = "Não sei"/não informada** → nada é ocultado; aviso pede a informação.
+4. **Simples Nacional** → mensagem EXATA definida pelo Fiscal (não parafrasear):
+   "Atenção: Prestadores optantes pelo Simples Nacional, não sofrem retenções,
+   com exceção dos enquadrados no Anexo IV".
+5. Local de execução e frequência são informativos (reforçam avisos), não filtram.
 
 ## Convenções obrigatórias
 

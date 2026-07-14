@@ -217,8 +217,12 @@
      nem de um filtro destrutivo por local. Ela vem do campo estruturado
      "Impostos Retidos" (classificado por js/fiscal.js) + de um questionário
      fiscal (cessão de mão de obra/empreitada, local, continuidade, Simples).
-     A ferramenta é ADVISORY: orienta e destaca, mas nunca esconde o código
-     correto, e sempre remete a confirmação ao Departamento Fiscal. */
+     A ferramenta orienta e destaca, e sempre remete a confirmação ao
+     Departamento Fiscal. Exceção deliberada (regra de negócio do Fiscal):
+     quando o usuário afirma que NÃO há cessão de mão de obra/empreitada,
+     os códigos que retêm INSS são OCULTADOS da lista — sem cessão não há
+     retenção de INSS (Lei 8.212/91, art. 31), então exibi-los induziria
+     à requisição errada. */
   var elQServ = document.getElementById('qServico');
 
   var local = null;      // 'dentro' | 'fora' (local de execução — informativo)
@@ -272,7 +276,20 @@
     if (!temInss) { local = null; cessao = null; continuo = null; simples = null; }
     pillsServ();
 
+    /* Regra de negócio: sem cessão de mão de obra/empreitada não há retenção
+       de INSS — códigos que retêm INSS saem da lista. (temInss é calculado
+       ANTES do filtro para o questionário continuar visível.) */
+    var ocultadosInss = 0;
+    if (cessao === 'nao') {
+      var soSemInss = res.filter(function (r) { return !classif(r.linha).retemInss; });
+      ocultadosInss = res.length - soSemInss.length;
+      res = soSemInss;
+    }
+
     var avisos = [];
+    if (ocultadosInss > 0) {
+      avisos.push(avisoHtml('aviso', ocultadosInss + ' código(s) com retenção de INSS ocultado(s) porque você informou que não há cessão de mão de obra/empreitada.'));
+    }
     if (temInss) {
       var aval = Fiscal.avaliaCenario(
         { local: local, cessao: cessao, continuo: continuo, simples: simples },
@@ -285,7 +302,9 @@
 
     if (!res.length) {
       qtd.textContent = 'Nenhum serviço encontrado';
-      tbody.innerHTML = '<tr><td colspan="7"><div class="vazio"><b>Nenhum resultado com os critérios atuais.</b><br>Tente outras palavras ou outra grafia.<br>Se o serviço não existe na base, contate o Departamento Fiscal.</div></td></tr>';
+      tbody.innerHTML = ocultadosInss > 0
+        ? '<tr><td colspan="7"><div class="vazio"><b>Todos os códigos encontrados para esta busca retêm INSS</b> e foram ocultados porque você informou que não há cessão de mão de obra/empreitada.<br>Revise a resposta de cessão ou confirme o enquadramento com o Departamento Fiscal.</div></td></tr>'
+        : '<tr><td colspan="7"><div class="vazio"><b>Nenhum resultado com os critérios atuais.</b><br>Tente outras palavras ou outra grafia.<br>Se o serviço não existe na base, contate o Departamento Fiscal.</div></td></tr>';
       return;
     }
 
@@ -298,10 +317,10 @@
       var tagImposto = !retemAlgo
         ? '<span class="tag neutro">Não retém</span>'
         : '<span class="tag ' + (c.retemInss ? 'warn' : 'ok') + '" title="' + esc(c.texto) + '">' + esc(l[4]) + '</span>';
-      /* destaque advisory: marca o código coerente com o cenário informado,
-         sem nunca remover os demais da lista */
-      var recomendado = temInss && cessao && cessao !== 'naosei' &&
-        ((cessao === 'sim' && c.retemInss) || (cessao === 'nao' && !c.retemInss));
+      /* destaque advisory: marca o código coerente com o cenário informado.
+         (com cessão="não" a lista já contém apenas códigos sem INSS, então
+         a marcação só faz sentido no cenário cessão="sim") */
+      var recomendado = temInss && cessao === 'sim' && c.retemInss;
       var tagRec = recomendado ? '<br><span class="tag ok">coerente com o cenário</span>' : '';
       return '<tr' + (recomendado ? ' class="rec"' : '') + '>' +
         '<td class="acao">' + botaoCopiar(l[1]) + '</td>' +

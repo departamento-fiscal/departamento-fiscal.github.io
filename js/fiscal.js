@@ -109,7 +109,7 @@
       }
       msgs.push('Cenário informado: HÁ cessão de mão de obra/empreitada → em regra incide retenção de INSS. Priorize o código que retém INSS.');
       if (cen.simples === 'sim' || (cls && cls.excecaoSimples)) {
-        msgs.push('Atenção: prestador optante pelo Simples Nacional pode NÃO sofrer retenção (ex.: Anexo III). Confirmar enquadramento com o Fiscal.');
+        msgs.push('Atenção: Prestadores optantes pelo Simples Nacional, não sofrem retenções, com exceção dos enquadrados no Anexo IV');
       }
       if (cen.continuo === true) {
         msgs.push('Serviço contínuo/recorrente reforça a caracterização de cessão de mão de obra — atenção redobrada.');
@@ -119,7 +119,7 @@
     }
 
     if (cen.cessao === 'nao') {
-      msgs.push('Cenário informado: NÃO há cessão de mão de obra/empreitada → em regra não há retenção de INSS. Ainda assim, valide a natureza do serviço com o Fiscal.');
+      msgs.push('Cenário informado: NÃO há cessão de mão de obra/empreitada → não há retenção de INSS. Os códigos que retêm INSS foram ocultados da lista.');
       msgs.push(base);
       return { inss: 'nao_aplica', nivel: 'info', mensagens: msgs };
     }

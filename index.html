@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Consulta Fiscal">
-<link rel="stylesheet" href="css/style.css?v=7">
+<link rel="stylesheet" href="css/style.css?v=8">
 </head>
 <body>
 
@@ -109,7 +109,8 @@
       </div>
 
       <!-- Questionário fiscal: aparece só quando há códigos que retêm INSS entre os candidatos.
-           Nenhuma resposta esconde códigos; as respostas apenas orientam e destacam. -->
+           As respostas orientam e destacam; exceção: cessão="Não" OCULTA os códigos que retêm INSS
+           (sem cessão de mão de obra/empreitada não há retenção de INSS — Lei 8.212/91, art. 31). -->
       <div id="rowFiscal" hidden>
         <div class="field-row">
           <div class="escolha">
@@ -168,8 +169,8 @@
   </section>
 </main>
 
-<script src="js/busca.js?v=7"></script>
-<script src="js/fiscal.js?v=7"></script>
-<script src="js/app.js?v=7"></script>
+<script src="js/busca.js?v=8"></script>
+<script src="js/fiscal.js?v=8"></script>
+<script src="js/app.js?v=8"></script>
 </body>
 </html>

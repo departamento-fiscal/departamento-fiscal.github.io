@@ -67,3 +67,17 @@ test('avaliaCenario: Simples gera alerta de exceção', function () {
   assert.equal(r.inss, 'aplica');
   assert.ok(r.mensagens.some(function (m) { return /Simples Nacional/.test(m); }));
 });
+
+test('avaliaCenario: mensagem do Simples é o texto exato definido pelo Fiscal (Anexo IV)', function () {
+  var c = F.classificaImpostos('Retém INSS');
+  var r = F.avaliaCenario({ cessao: 'sim', simples: 'sim' }, c);
+  assert.ok(r.mensagens.indexOf('Atenção: Prestadores optantes pelo Simples Nacional, não sofrem retenções, com exceção dos enquadrados no Anexo IV') >= 0,
+    'mensagem do Simples deve ser exatamente a definida pelo Departamento Fiscal');
+});
+
+test('avaliaCenario: cessão=não avisa que códigos com INSS foram ocultados', function () {
+  var r = F.avaliaCenario({ cessao: 'nao' }, F.classificaImpostos('Retém INSS'));
+  assert.equal(r.inss, 'nao_aplica');
+  assert.ok(r.mensagens.some(function (m) { return /ocultados/.test(m); }),
+    'mensagem deve refletir que a lista oculta códigos que retêm INSS');
+});
