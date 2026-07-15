@@ -94,8 +94,13 @@
       if (rt === qt) return 1;
       if (qt.length >= 3 && rt.indexOf(qt) === 0) { if (melhor < 0.85) melhor = 0.85; continue; }
       if (qt.length >= 4 && rt.indexOf(qt) > 0) { if (melhor < 0.7) melhor = 0.7; continue; }
-      if (qt.length >= 4 && rt.length >= 4) {
-        var teto = qt.length >= 7 ? 2 : 1;
+      /* Aproximação por distância de edição SÓ quando a primeira letra
+         coincide: erro de digitação quase nunca troca a primeira letra,
+         enquanto palavras diferentes com o mesmo sufixo (volante/rolante/
+         isolante) quase sempre começam diferente. Para distância 2, exige
+         as DUAS primeiras letras iguais (guarda extra contra falsos primos). */
+      if (qt.length >= 4 && rt.length >= 4 && qt.charAt(0) === rt.charAt(0)) {
+        var teto = (qt.length >= 7 && qt.slice(0, 2) === rt.slice(0, 2)) ? 2 : 1;
         var d = lev(qt, rt, teto);
         if (d > teto) continue; /* lev devolve teto+1 quando estoura o limite */
         if (d === 1 && melhor < 0.75) melhor = 0.75;

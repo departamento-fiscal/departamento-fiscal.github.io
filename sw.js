@@ -9,14 +9,14 @@
    ===================================================================== */
 'use strict';
 
-var VERSAO = 'consulta-fiscal-v8';
+var VERSAO = 'consulta-fiscal-v9';
 var ESTATICOS = [
   './',
   'index.html',
-  'css/style.css?v=8',
-  'js/busca.js?v=8',
-  'js/fiscal.js?v=8',
-  'js/app.js?v=8',
+  'css/style.css?v=9',
+  'js/busca.js?v=9',
+  'js/fiscal.js?v=9',
+  'js/app.js?v=9',
   'manifest.webmanifest',
   'icons/icone-192.png',
   'icons/icone-512.png',

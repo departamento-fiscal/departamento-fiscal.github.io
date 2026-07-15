@@ -53,3 +53,25 @@ test('busca por código (prefixo LC/ERP)', function () {
   var r = B.busca(idx, '01.01', 50);
   assert.ok(r.length > 0);
 });
+
+/* Regressão: aproximação não pode casar palavras diferentes com o mesmo
+   sufixo (volante ≠ rolante ≠ isolante). Erro de digitação real preserva
+   a primeira letra; palavra diferente quase sempre começa diferente. */
+test('fuzzy não confunde volante com rolante/isolante (primeira letra)', function () {
+  var linhas = [
+    ['1', '100', 'VOLANTE;DIRECAO;VEICULO', '', '', '', ''],
+    ['2', '200', 'ESTEIRA;ROLANTE;TRANSPORTADORA', '', '', '', ''],
+    ['3', '300', 'ISOLANTE;TERMICO;MANTA', '', '', '', '']
+  ];
+  var i2 = B.criaIndice(linhas, [{ i: 2, peso: 1 }, { i: 0, codigo: true }, { i: 1, codigo: true }]);
+  var r = B.busca(i2, 'volante', 50);
+  assert.equal(r.length, 1, 'só o registro de VOLANTE deveria casar');
+  assert.equal(r[0].linha[1], '100');
+});
+
+test('fuzzy continua tolerando erro de digitação que preserva a 1ª letra', function () {
+  var linhas = [['1', '100', 'VOLANTE;DIRECAO;VEICULO', '', '', '', '']];
+  var i2 = B.criaIndice(linhas, [{ i: 2, peso: 1 }, { i: 0, codigo: true }, { i: 1, codigo: true }]);
+  assert.ok(B.busca(i2, 'vollante', 50).length === 1, 'vollante (letra duplicada) deve achar volante');
+  assert.ok(B.busca(i2, 'voalnte', 50).length === 1, 'voalnte (letras trocadas, d=2, 2 primeiras iguais) deve achar volante');
+});
